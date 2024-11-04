@@ -1,0 +1,62 @@
+name: Pull Request
+run-name: Pull Request for ${{ github.ref_name }} by ${{ github.actor }}
+
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+# Allows the automerge bot PR job to comment on dependabot PRs
+permissions: read-all, runs-on
+
+jobs:
+
+  test:
+    runs-on: public-amd64-small
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Install Dependencies
+        run: |
+          pnpm install
+
+      - name: Run Mocha Tests
+        run: npm run mocha-test
+
+      - name: Run Jest Tests
+        run: npm run jest-test
+
+      - name: Run Jasmine Tests
+        run: npm run jasmine-test
+
+      - name: Run Playwright Tests
+        run: npm run playwright-test
+
+  upload:
+    name: Upload flaky test results
+    steps:
+      - name: Upload results
+        # Run this step even if the test step ahead fails
+        if: "!cancelled()"
+        uses: trunk-io/analytics-uploader@main
+        with:
+          # Path to your test results.
+          junit-paths: "**/*_test.xml,**/junitresults-*.xml"
+          # Provide your Trunk organization slug.
+          org-slug: gmbh
+          # Provide your Trunk API token as a GitHub secret.
+          token: ${{ secrets.TRUNK_API_TOKEN }}
+        continue-on-error: true
