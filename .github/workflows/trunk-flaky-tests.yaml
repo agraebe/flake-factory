@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 # Allows the automerge bot PR job to comment on dependabot PRs
-permissions: read-all
+permissions: read-all, runs-on
 
 jobs:
 
