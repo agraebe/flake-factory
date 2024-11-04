@@ -81,3 +81,14 @@ jobs:
           cli-version: ${{ inputs.cli-version }}
           junit-paths: "**/*_test.xml,**/junitresults-*.xml"
           run: npm run playwright-test
+
+      - name: Upload Jest Test Results
+        uses: trunk-io/analytics-uploader@main
+        # Upload the results even if the tests fail
+        if: "!cancelled()"
+        with:
+          junit-paths: junit.xml
+          org-slug: gmbh
+          token: ${{ secrets.TRUNK_API_TOKEN }}
+        # don't fail this job if the upload fails
+        continue-on-error: true
