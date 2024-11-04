@@ -10,13 +10,13 @@ concurrency:
   cancel-in-progress: true
 
 # Allows the automerge bot PR job to comment on dependabot PRs
-permissions: read-all, runs-on
+permissions: read-all
 
 jobs:
 
   test:
     runs-on: public-amd64-small
-
+    name: Run tests
     steps:
       - uses: actions/checkout@v4
 
@@ -46,6 +46,7 @@ jobs:
         run: npm run playwright-test
 
   upload:
+    runs-on: public-amd64-small
     name: Upload flaky test results
     steps:
       - name: Upload results
