@@ -1,4 +1,3 @@
-import { Season } from "../../../src/season";
 const moment = require("moment");
 
 describe("Jest - Day of the Week Tests", () => {
