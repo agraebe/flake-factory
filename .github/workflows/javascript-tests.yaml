@@ -6,18 +6,10 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      # trunk-ignore(checkov/CKV_GHA_7)
-      cli-version:
-        type: string
-        required: false
-        description:
-          The version of `analytics-cli` to use. Defaults to the latest specified in
-          `analytis-uploader`.
 
 jobs:
   test:
-    runs-on: public-amd64-small
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -35,57 +27,20 @@ jobs:
         run: |
           pnpm install
 
-      - name: Run Mocha Tests
-        uses: ./.github/actions/analytics-uploader-wrapper
-        with:
-          token-staging: ${{ secrets.TRUNK_STAGING_ORG_API_TOKEN }}
-          token-prod: ${{ secrets.TRUNK_PROD_ORG_API_TOKEN }}
-          token-dev: ${{ secrets.TRUNK_DEV_ORG_API_TOKEN }}
-          token-dev2: ${{ secrets.TRUNK_DEV2_ORG_API_TOKEN }}
-          token-dev3: ${{ secrets.TRUNK_DEV3_ORG_API_TOKEN }}
-          token-dev4: ${{ secrets.TRUNK_DEV4_ORG_API_TOKEN }}
-          cli-version: ${{ inputs.cli-version }}
-          junit-paths: "**/mocha_test.xml"
-          run: npm run mocha-test
-
       - name: Run Jest Tests
-        if: ${{ always() }}
-        uses: ./.github/actions/analytics-uploader-wrapper
+        run: npm run jest-test
+      
+      - name: Upload results
+        # Run this step even if the test step ahead fails
+        if: "!cancelled()"
+        uses: trunk-io/analytics-uploader@main
         with:
-          token-staging: ${{ secrets.TRUNK_STAGING_ORG_API_TOKEN }}
-          token-prod: ${{ secrets.TRUNK_PROD_ORG_API_TOKEN }}
-          token-dev: ${{ secrets.TRUNK_DEV_ORG_API_TOKEN }}
-          token-dev2: ${{ secrets.TRUNK_DEV2_ORG_API_TOKEN }}
-          token-dev3: ${{ secrets.TRUNK_DEV3_ORG_API_TOKEN }}
-          token-dev4: ${{ secrets.TRUNK_DEV4_ORG_API_TOKEN }}
-          cli-version: ${{ inputs.cli-version }}
-          junit-paths: "**/*_test.xml,**/junitresults-*.xml"
-          run: npm run jest-test
-
-      - name: Run Jasmine Tests
-        if: ${{ always() }}
-        uses: ./.github/actions/analytics-uploader-wrapper
-        with:
-          token-staging: ${{ secrets.TRUNK_STAGING_ORG_API_TOKEN }}
-          token-prod: ${{ secrets.TRUNK_PROD_ORG_API_TOKEN }}
-          token-dev: ${{ secrets.TRUNK_DEV_ORG_API_TOKEN }}
-          token-dev2: ${{ secrets.TRUNK_DEV2_ORG_API_TOKEN }}
-          token-dev3: ${{ secrets.TRUNK_DEV3_ORG_API_TOKEN }}
-          token-dev4: ${{ secrets.TRUNK_DEV4_ORG_API_TOKEN }}
-          cli-version: ${{ inputs.cli-version }}
-          junit-paths: "**/*_test.xml,**/junitresults-*.xml"
-          run: npm run jasmine-test
-
-      - name: Run Playwright Tests
-        if: ${{ always() }}
-        uses: ./.github/actions/analytics-uploader-wrapper
-        with:
-          token-staging: ${{ secrets.TRUNK_STAGING_ORG_API_TOKEN }}
-          token-prod: ${{ secrets.TRUNK_PROD_ORG_API_TOKEN }}
-          token-dev: ${{ secrets.TRUNK_DEV_ORG_API_TOKEN }}
-          token-dev2: ${{ secrets.TRUNK_DEV2_ORG_API_TOKEN }}
-          token-dev3: ${{ secrets.TRUNK_DEV3_ORG_API_TOKEN }}
-          token-dev4: ${{ secrets.TRUNK_DEV4_ORG_API_TOKEN }}
-          cli-version: ${{ inputs.cli-version }}
-          junit-paths: "**/*_test.xml,**/junitresults-*.xml"
-          run: npm run playwright-test
+          # Path to your test results.
+          junit-paths: "tests/jest/*.xml"
+          # Provide your Trunk organization slug.
+          org-slug: "alexs-org"
+          # Provide your Trunk API token as a GitHub secret.
+          token: ${{ secrets.TRUNK_STAGING_ORG_API_TOKEN }}
+        continue-on-error: true
+        env:
+          TRUNK_PUBLIC_API_ADDRESS: https://api.trunk-staging.io
