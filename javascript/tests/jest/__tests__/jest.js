@@ -15,4 +15,14 @@ describe("Jest - Day of the Week Tests", () => {
     const today = moment().format("dddd");
     expect(["Saturday", "Sunday"]).toContain(today);
   });
+
+  test("HuntingSeason is: Duck", () => {
+    const season = new Season();
+    expect(season.getCurrent()).toEqual("Duck");
+  });
+
+  test("HuntingSeason is: Rabbit", () => {
+    const season = new Season();
+    expect(season.getCurrent()).toEqual("Rabbit");
+  });
 });
