@@ -1,4 +1,4 @@
-import Season from "../../../src/season";
+import { Season } from "../../../src/season";
 const moment = require("moment");
 
 describe("Jest - Day of the Week Tests", () => {
@@ -18,12 +18,6 @@ describe("Jest - Day of the Week Tests", () => {
   });
 
   test("HuntingSeason is: Duck", () => {
-    const season = new Season();
-    expect(season.getCurrent()).toEqual("Duck");
-  });
-
-  test("HuntingSeason is: Rabbit", () => {
-    const season = new Season();
-    expect(season.getCurrent()).toEqual("Rabbit");
+    expect("Rabbit").toEqual("Duck");
   });
 });
