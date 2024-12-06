@@ -36,9 +36,9 @@ jobs:
         uses: trunk-io/analytics-uploader@main
         with:
           # Path to your test results.
-          junit-paths: "tests/jest/*.xml"
+          junit-paths: "**/jest_junit_test.xml"
           # Provide your Trunk organization slug.
-          org-slug: "alexs-org"
+          org-slug: alexs-org
           # Provide your Trunk API token as a GitHub secret.
           token: ${{ secrets.TRUNK_STAGING_ORG_API_TOKEN }}
         continue-on-error: true
