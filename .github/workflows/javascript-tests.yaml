@@ -29,6 +29,7 @@ jobs:
 
       - name: Run Jest Tests
         run: npm run jest-test
+        continue-on-error: true
       
       - name: Upload results
         # Run this step even if the test step ahead fails
@@ -41,6 +42,7 @@ jobs:
           org-slug: alexs-org
           # Provide your Trunk API token as a GitHub secret.
           token: ${{ secrets.TRUNK_STAGING_ORG_API_TOKEN }}
-        continue-on-error: true
+          quarantine: true
+          continue-on-error: true
         env:
           TRUNK_PUBLIC_API_ADDRESS: https://api.trunk-staging.io
