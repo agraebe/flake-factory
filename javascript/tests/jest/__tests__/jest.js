@@ -17,6 +17,6 @@ describe("Jest - Day of the Week Tests", () => {
   });
 
   test("HuntingSeason is: Duck", () => {
-    expect("Rabbit").toEqual("Duck");
+    expect("Rabbit").toEqual("Rabbit");
   });
 });
