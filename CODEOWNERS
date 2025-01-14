@@ -7,7 +7,7 @@
 * @agraebe
 
 # Specify multiple Code Owners by using a tab or space:
-* @multiple @code @owners
+* @agraebe @code @owners
 
 # Rules defined later in the file take precedence over the rules
 # defined before.
